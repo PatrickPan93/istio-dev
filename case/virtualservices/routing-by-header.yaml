@@ -1,0 +1,20 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: reviews
+spec:
+  hosts: # 列出VirtualService的hosts，可以是IP、DNS名称、FQDN或*
+  - reviews
+  http: # 在下面配置VirtualService的路由规则，指定符合哪些规则的流量打到哪些Destination，支持HTTP/1.1，HTTP2，及gRPC等协议
+  - match: # 指定具体的匹配规则
+    - headers:
+        end-user:
+          exact: jason
+    route:
+    - destination: # 指定满足规则后将流量打到哪个具体的Destination
+        host: reviews
+        subset: v2
+  - route:  # 流量规则按从上到下的优先级去匹配，若不满足上述规则时，进入该默认规则
+    - destination:
+        host: reviews
+        subset: v3
